@@ -1,4 +1,27 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue';
+
+
+let tab = ref([])
+function ajouterPanier(Produit){
+  console.log(Produit);
+  const item = tab.value.find((p) => p.id ===Produit.id)
+  if(item){
+    item.quantity++
+  }else{
+    
+    tab.value.push({
+      ...Produit,
+    quantity:1
+    })
+  }
+}
+function removeProduit(produit) {
+  console.log('Supprimer moi oooh!!!',produit);
+  
+}
+</script>
+
 
 <template>
   <div>
@@ -8,7 +31,11 @@
       <RouterLink :to="{name : 'cart-view'}" class="nav-link">Paniers</RouterLink>
     </nav>
     <div class="container">
-      <RouterView/>
+      <RouterView
+      @add-to-cart="ajouterPanier"
+      @clear-cart="removeProduit"
+      :cart="tab"
+      />
     </div>
   </div>
 </template>

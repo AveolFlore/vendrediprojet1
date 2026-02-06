@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
+const emit = defineEmits(['add-to-cart'])
+
 const route = useRoute()
 const productId = route.params.id
 
@@ -22,10 +24,12 @@ async function fetchProduct() {
 }
 
 onMounted(fetchProduct)
+
 function handleAdd() {
-  props.addToCart(props.product)
+  emit('add-to-cart', product.value)
 }
 </script>
+
 
 <template>
   <div class="details-container">
@@ -57,7 +61,8 @@ function handleAdd() {
         <p class="rating">⭐ {{ product.rating }}</p>
         <p class="description">{{ product.description }}</p>
 
-       <button @click="handleAdd">Ajouter au panier</button>
+       <button @click="handleAdd"
+       :cart ="product">Ajouter au panier</button>
       </div>
     </div>
   </div>

@@ -5,9 +5,11 @@ import { onMounted, ref } from 'vue'
 const produits = ref([])
 const loading = ref(true)
 
+const emit = defineEmits(['add-to-cart'])
+
 async function affichage() {
   try {
-    const resultat = await fetch("https://dummyjson.com/products")
+    const resultat = await fetch('https://dummyjson.com/products')
     const data = await resultat.json()
     produits.value = data.products
     loading.value = false
@@ -19,16 +21,10 @@ async function affichage() {
 onMounted(affichage)
 
 function addToCart(product) {
-  const existing = cart.value.find(item => item.id === product.id)
-  if (existing) {
-    existing.quantity += 1
-  } else {
-    cart.value.push({ ...product, quantity: 1 })
-  }
-  console.log('Panier :', cart.value)
+  emit('add-to-cart', product)
 }
-
 </script>
+
 
 <template>
   <h2>Nos Produits</h2>
@@ -40,7 +36,7 @@ function addToCart(product) {
       v-for="prod in produits"
       :key="prod.id"
       :product="prod"
-      :add="addToCart"
+      @add="addToCart"
     />
   </div>
 </template>

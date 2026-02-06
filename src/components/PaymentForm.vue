@@ -2,9 +2,10 @@
 import { ref } from 'vue'
 
 const props = defineProps({
-  cart: Array,
-  clearCart: Function
+  cart: Array
 })
+
+const emit = defineEmits(['clear-cart'])
 
 const name = ref('')
 const card = ref('')
@@ -16,9 +17,10 @@ function pay() {
   if (!name.value || !card.value || !exp.value || !cvv.value) return alert('Remplir tous les champs')
   if (props.cart.length === 0) return alert('Panier vide')
   success.value = true
-  props.clearCart()
+  emit('clear-cart')
 }
 </script>
+
 
 <template>
   <div>
