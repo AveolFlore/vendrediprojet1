@@ -1,4 +1,6 @@
 <script setup>
+import { ref } from 'vue'
+
 const emit = defineEmits(['add'])
 
 const props = defineProps({
@@ -7,6 +9,21 @@ const props = defineProps({
     required: true
   }
 })
+
+// Message de succès
+const successMessage = ref('')
+
+function handleAdd() {
+  emit('add', props.product)
+
+  // Afficher le message de succès
+  successMessage.value = '✅ Ajout au panier effectué avec succès'
+
+  // Masquer le message après 3 secondes
+  setTimeout(() => {
+    successMessage.value = ''
+  }, 3000)
+}
 </script>
 
 <template>
@@ -15,17 +32,22 @@ const props = defineProps({
     <h3>{{ product.title }}</h3>
     <p class="price">{{ product.price }} $</p>
     <p>⭐ {{ product.rating }}</p>
+    <p>{{ product.error }}</p>
 
     <RouterLink
-      :to="{ name: 'product-details-view',params : {id:product.id} }">
+      :to="{ name: 'product-details-view', params: { id: product.id } }">
       Voir détails
-    </RouterLink>
+    </RouterLink>  
 
-    <button @click="emit('add', product)">
+    <button @click="handleAdd">
       Ajouter au panier
     </button>
+
+    <!-- Message de succès -->
+    <p v-if="successMessage" class="success-msg">{{ successMessage }}</p>
   </div>
 </template>
+
 <style scoped>
 .card {
   width: 260px;
@@ -104,4 +126,12 @@ const props = defineProps({
   transform: scale(0.97);
 }
 
+/* Message succès */
+.success-msg {
+  margin-top: 8px;
+  color: #16a34a;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity 0.3s ease;
+}
 </style>

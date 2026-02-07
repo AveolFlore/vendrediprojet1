@@ -11,6 +11,9 @@ const product = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
+// Message de succès
+const successMessage = ref('')
+
 async function fetchProduct() {
   try {
     const res = await fetch(`https://dummyjson.com/products/${productId}`)
@@ -27,9 +30,16 @@ onMounted(fetchProduct)
 
 function handleAdd() {
   emit('add-to-cart', product.value)
+  
+  // Afficher le message de succès
+  successMessage.value = '✅ Ajout au panier effectué avec succès'
+
+  // Masquer le message après 3 secondes
+  setTimeout(() => {
+    successMessage.value = ''
+  }, 3000)
 }
 </script>
-
 
 <template>
   <div class="details-container">
@@ -45,7 +55,6 @@ function handleAdd() {
         </div>
       </div>
 
-    
       <div class="details-info">
         <h1>{{ product.title }}</h1>
 
@@ -61,9 +70,16 @@ function handleAdd() {
         <p class="rating">⭐ {{ product.rating }}</p>
         <p class="description">{{ product.description }}</p>
 
-       <button @click="handleAdd"
-       :cart ="product">Ajouter au panier</button>
+        <button class="btn-add-cart" @click="handleAdd">
+          Ajouter au panier
+        </button>
+
+        <!-- Message de succès -->
+        
       </div>
+    </div>
+    <div>
+      <p v-if="successMessage" class="success-msg">{{ successMessage }}</p>
     </div>
   </div>
 </template>
@@ -74,6 +90,8 @@ function handleAdd() {
   margin: 40px auto;
   padding: 0 20px;
   font-family: 'Inter', sans-serif;
+  display: flex;
+  gap: 20px;
 }
 
 .loading, .error {
@@ -198,6 +216,13 @@ function handleAdd() {
 .btn-add-cart:hover {
   transform: scale(1.05);
   background: linear-gradient(135deg,#1d4ed8,#1e3a8a);
+}
+
+.success-msg {
+  margin-top: 12px;
+  color: #16a34a;
+  font-weight: 600;
+  transition: opacity 0.3s ease;
 }
 
 @media(max-width: 1000px){

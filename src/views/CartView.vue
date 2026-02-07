@@ -1,21 +1,32 @@
 <script setup>
-import { computed,ref } from 'vue'
+import { computed, ref } from 'vue'
 import CartItem from '@/components/CartItem.vue'
 import PaymentForm from '@/components/PaymentForm.vue'
 const pays = ref(false)
 const props = defineProps({
   cart: {
-    type:Array,
-    required :true
+    type: Array,
+    required: true
   }
 })
 console.log(props.cart);
-
-const emit = defineEmits(['remove-from-cart', 'clear-cart'])
+const emit = defineEmits([
+  'remove-from-cart',
+  'increase-qty',
+  'decrease-qty',
+  'clear-cart'
+])
 
 const total = computed(() =>
   props.cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 )
+
+function handlePaymentSuccess() {
+  emit('clear-cart')
+  pays.value = false
+  window.location.reload()
+}
+
 </script>
 
 <template>
@@ -29,12 +40,12 @@ const total = computed(() =>
     <div v-else class="cart-content">
       <!-- Liste des produits -->
       <div class="items">
-        <CartItem
-          v-for="item in cart"
-          :key="item.id"
-          :item="item"
-          @remove="emit('remove-from-cart', $event)"
-        />
+        <CartItem v-for="item in cart" 
+        :key="item.id" 
+        :item="item" 
+        @remove="emit('remove-from-cart', item)"
+        @increase="emit('increase-qty', $event)" 
+        @decrease="emit('decrease-qty', $event)" />
       </div>
 
       <!-- Résumé -->
@@ -52,11 +63,16 @@ const total = computed(() =>
       </div>
     </div>
 
+    <!-- <PaymentForm v-if="pays" :cart="cart" @clear-cart="emit('clear-cart')" /> -->
+
+    <div v-if="pays" class="modal-overlay" @click.self="pays = false">
+  <div class="modal">
     <PaymentForm
-      v-if="pays"
       :cart="cart"
-      @clear-cart="emit('clear-cart')"
+      @clear-cart="handlePaymentSuccess"
     />
+  </div>
+</div>
   </div>
 </template>
 
@@ -96,7 +112,7 @@ const total = computed(() =>
   background: #ffffff;
   border-radius: 14px;
   padding: 24px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   height: fit-content;
 }
 
@@ -137,6 +153,37 @@ const total = computed(() =>
   transform: scale(0.97);
 }
 
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal {
+  background: white;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 16px;
+  padding: 24px;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .cart-content {
@@ -144,4 +191,3 @@ const total = computed(() =>
   }
 }
 </style>
-

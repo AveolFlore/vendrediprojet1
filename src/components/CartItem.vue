@@ -1,14 +1,12 @@
 <script setup>
 const props = defineProps({
   item: {
-    type : Object,
-    required : true
+    type: Object,
+    required: true
   }
 })
-console.log(props.item);
 
-
-const emit = defineEmits(['remove'])
+const emit = defineEmits(['remove-from-cart', 'increase', 'decrease'])
 </script>
 
 
@@ -28,10 +26,16 @@ const emit = defineEmits(['remove'])
         Sous-total : <strong>{{ item.price * item.quantity }} $</strong>
       </p>
 
-      <button class="remove-btn" @click="emit('remove', item.id)">
+      <button class="remove-btn" @click="emit('remove', item)">
         Supprimer
       </button>
     </div>
+    <div class="quantity-controls">
+  <button @click="emit('decrease', item.id)">−</button>
+  <span>{{ item.quantity }}</span>
+  <button @click="emit('increase', item.id)">+</button>
+</div>
+
   </div>
 </template>
 
@@ -105,6 +109,29 @@ const emit = defineEmits(['remove'])
 
 .remove-btn:active {
   transform: scale(0.96);
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity-controls button {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: #e5e7eb;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.quantity-controls span {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
 }
 
 /* Responsive */
