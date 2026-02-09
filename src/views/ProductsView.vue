@@ -75,8 +75,8 @@ const filteredProducts = computed(() => {
 <style scoped>
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 2fr));
+  gap: 95px;
   margin-top: 20px;
 }
 

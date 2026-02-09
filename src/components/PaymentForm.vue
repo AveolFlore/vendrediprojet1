@@ -1,4 +1,5 @@
 <script setup>
+import router from '@/router'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -16,7 +17,6 @@ const exp = ref('')
 const cvv = ref('')
 const success = ref(false)
 
-// Messages d'erreur
 const errors = ref({
   name: '',
   card: '',
@@ -26,7 +26,6 @@ const errors = ref({
 })
 
 function pay() {
-  // Réinitialiser les erreurs
   errors.value = { name: '', card: '', exp: '', cvv: '', cart: '' }
 
   let hasError = false
@@ -39,15 +38,12 @@ function pay() {
 
   if (hasError) return
 
-  // ✅ Paiement réussi
   success.value = true
 
-  // On attend un petit délai avant de vider le panier pour que le message reste visible
   setTimeout(() => {
     emit('clear-cart')
   }, 2000) 
 
-  // Réinitialiser le formulaire après 3s
   setTimeout(() => {
     success.value = false
     name.value = ''
@@ -55,13 +51,14 @@ function pay() {
     exp.value = ''
     cvv.value = ''
   }, 20000)
+  router.push({ name: 'products-view'})
 }
 </script>
 
 <template>
   <div class="payment-form">
     <h3>Checkout</h3>
-
+    
     <p v-if="errors.cart" class="error">{{ errors.cart }}</p>
 
     <div v-if="success" class="success">

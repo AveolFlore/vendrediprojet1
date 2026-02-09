@@ -1,17 +1,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const emit = defineEmits(['add-to-cart'])
 
 const route = useRoute()
+const router = useRouter()
 const productId = route.params.id
 
 const product = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
-// Message de succès
 const successMessage = ref('')
 
 async function fetchProduct() {
@@ -30,24 +30,30 @@ onMounted(fetchProduct)
 
 function handleAdd() {
   emit('add-to-cart', product.value)
-  
-  // Afficher le message de succès
+
   successMessage.value = '✅ Ajout au panier effectué avec succès'
 
-  // Masquer le message après 3 secondes
   setTimeout(() => {
     successMessage.value = ''
   }, 3000)
+}
+
+function goBack() {
+  router.push({ name: 'products-view' })
+  // ou simplement : router.back()
 }
 </script>
 
 <template>
   <div class="details-container">
+    <button class="btn-back" @click="goBack">
+      ⬅ Retour aux produits
+    </button>
+
     <p v-if="loading" class="loading">Chargement du produit...</p>
     <p v-else-if="error" class="error">{{ error }}</p>
 
     <div v-else class="details-card">
-
       <div class="images-section">
         <img :src="product.thumbnail" alt="" class="main-img" />
         <div class="other-images">
@@ -61,7 +67,10 @@ function handleAdd() {
         <div class="badges">
           <span class="badge category">{{ product.category }}</span>
           <span class="badge brand">{{ product.brand }}</span>
-          <span class="badge stock" :class="{ 'out-stock': product.stock===0 }">
+          <span
+            class="badge stock"
+            :class="{ 'out-stock': product.stock === 0 }"
+          >
             {{ product.stock > 0 ? 'En stock' : 'Rupture' }}
           </span>
         </div>
@@ -73,14 +82,12 @@ function handleAdd() {
         <button class="btn-add-cart" @click="handleAdd">
           Ajouter au panier
         </button>
-
-        <!-- Message de succès -->
-        
       </div>
     </div>
-    <div>
-      <p v-if="successMessage" class="success-msg">{{ successMessage }}</p>
-    </div>
+
+    <p v-if="successMessage" class="success-msg">
+      {{ successMessage }}
+    </p>
   </div>
 </template>
 
@@ -91,13 +98,29 @@ function handleAdd() {
   padding: 0 20px;
   font-family: 'Inter', sans-serif;
   display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
-.loading, .error {
+.loading,
+.error {
   text-align: center;
   font-size: 1.2rem;
   color: #2563eb;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  width: fit-content;
+}
+
+.btn-back:hover {
+  text-decoration: underline;
 }
 
 .details-card {
@@ -147,7 +170,7 @@ function handleAdd() {
 
 .images-section .other-images img:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .details-info {
@@ -167,7 +190,6 @@ function handleAdd() {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin: 6px 0;
 }
 
 .badge {
@@ -178,10 +200,21 @@ function handleAdd() {
   color: #fff;
 }
 
-.badge.category { background: #2563eb; }
-.badge.brand { background: #1e40af; }
-.badge.stock { background: #16a34a; }
-.badge.out-stock { background: #dc2626; }
+.badge.category {
+  background: #2563eb;
+}
+
+.badge.brand {
+  background: #1e40af;
+}
+
+.badge.stock {
+  background: #16a34a;
+}
+
+.badge.out-stock {
+  background: #dc2626;
+}
 
 .price {
   font-size: 1.6rem;
@@ -190,12 +223,10 @@ function handleAdd() {
 }
 
 .rating {
-  font-size: 1rem;
   color: #fbbf24;
 }
 
 .description {
-  font-size: 1rem;
   color: #4b5563;
   line-height: 1.6;
 }
@@ -205,7 +236,7 @@ function handleAdd() {
   margin-top: 20px;
   padding: 12px 24px;
   border-radius: 10px;
-  background: linear-gradient(135deg,#2563eb,#1e40af);
+  background: linear-gradient(135deg, #2563eb, #1e40af);
   color: white;
   font-weight: 600;
   cursor: pointer;
@@ -215,27 +246,23 @@ function handleAdd() {
 
 .btn-add-cart:hover {
   transform: scale(1.05);
-  background: linear-gradient(135deg,#1d4ed8,#1e3a8a);
+  background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
 }
 
 .success-msg {
   margin-top: 12px;
   color: #16a34a;
   font-weight: 600;
-  transition: opacity 0.3s ease;
 }
 
-@media(max-width: 1000px){
+@media (max-width: 1000px) {
   .details-card {
     flex-direction: column;
     align-items: center;
   }
+
   .images-section .main-img {
-    width: 100%;
     height: auto;
-  }
-  .details-info {
-    width: 100%;
   }
 }
 </style>

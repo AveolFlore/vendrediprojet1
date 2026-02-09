@@ -67,6 +67,7 @@ function handleAdd() {
 }
 
 .card img {
+  padding-top: 0px;
   width: 100%;
   height: 170px;
   object-fit: cover;

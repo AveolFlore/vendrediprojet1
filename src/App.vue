@@ -62,9 +62,11 @@ function cancelRemove() {
 <template>
   <div>
     <nav class="navbar">
+      <!-- <h1>Flory'Shop</h1> -->
       <RouterLink :to="{ name: 'Home-view' }" class="nav-link">Accueil</RouterLink>
       <RouterLink :to="{ name: 'products-view' }" class="nav-link">Nos Produits</RouterLink>
-      <RouterLink :to="{ name: 'cart-view' }" class="nav-link">Paniers</RouterLink>
+      <RouterLink :to="{ name: 'about-view' }" class="nav-link">A Propos</RouterLink>
+      <RouterLink :to="{ name: 'cart-view' }" class="nav-link">🛒Paniers</RouterLink>
     </nav>
     <div class="container">
       <RouterView :cart="cart" @add-to-cart="ajouterPanier" @remove-from-cart="confirmRemove"
@@ -86,6 +88,10 @@ function cancelRemove() {
 </template>
 
 <style scoped>
+h1{
+  font-size: 1.2rem;
+  color: #38bdf8;
+}
 .navbar {
   display: flex;
   justify-content: center;
